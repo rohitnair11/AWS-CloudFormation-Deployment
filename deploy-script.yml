@@ -198,4 +198,30 @@ Resources:
             RouteTableId: !Ref PrivateRouteTable2
             SubnetId: !Ref PrivateSubnet2
     
+    S3AccessIAMRole:
+        Type: AWS::IAM::Role
+        Properties: 
+          AssumeRolePolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Principal:
+                  Service:
+                  - ec2.amazonaws.com
+                Action:
+                  - 'sts:AssumeRole'
+          ManagedPolicyArns:
+            - "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+          RoleName: S3AccessIAMRole
+          Tags: 
+            - Key: Name 
+              Value: !Sub ${EnvironmentName} S3AccessIAMRole
+
+    ProfileWithRolesForOurApp:
+        Type: AWS::IAM::InstanceProfile
+        DependsOn: S3AccessIAMRole
+        Properties: 
+          Roles:
+            - S3AccessIAMRole
+
     
