@@ -284,4 +284,30 @@ Resources:
             Ebs:
               VolumeSize: '10'
 
+    WebAppTargetGroup:
+        Type: AWS::ElasticLoadBalancingV2::TargetGroup
+        Properties:
+          HealthCheckIntervalSeconds: 10
+          HealthCheckPath: /
+          HealthCheckProtocol: HTTP
+          HealthCheckTimeoutSeconds: 8
+          HealthyThresholdCount: 2
+          Port: 80
+          Protocol: HTTP
+          UnhealthyThresholdCount: 5
+          VpcId: !Ref VPC
+
+    WebAppGroup:
+        Type: AWS::AutoScaling::AutoScalingGroup
+        Properties:
+          VPCZoneIdentifier:
+          - !Ref PrivateSubnet1
+          - !Ref PrivateSubnet2 
+          LaunchConfigurationName:
+            Ref: WebAppLaunchConfig
+          MinSize: '3'
+          MaxSize: '5'
+          TargetGroupARNs:
+          - Ref: WebAppTargetGroup
+
     
